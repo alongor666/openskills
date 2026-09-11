@@ -58,7 +58,8 @@
   .bcard p{margin:6px 0 0;font-size:13.5px}
   .mut{color:var(--gray);font-size:12.5px}
   .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  @media (max-width:860px){.grid3,.branch2{grid-template-columns:1fr}}
+  .grid2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+  @media (max-width:860px){.grid3,.grid2,.branch2{grid-template-columns:1fr}}
   @media print{body{font-size:13px}section{break-inside:avoid}.copybtn{display:none}}
 </style>
 </head>
@@ -139,8 +140,36 @@
 </div>
 <p class="sub" style="margin-top:12px">通道 A 按库型选导出法：文件型（SQLite / DuckDB / Access / Excel）导出文件即快照；服务型（SQL Server / MySQL / PostgreSQL）用备份 / 导出命令。判断不准就用 A——研究、报表、日常分析几乎都不需要实时。</p>
 
+<h2>动手前：先探后问（第 0 步）</h2>
+<p class="sub">固定顺序：探测（脚本能测）→ 提问（只能问人）→ 适配（改参数不改技能）。探针只读零副作用，能探到的不问用户。</p>
+<div class="branch2">
+  <div class="branch">
+    <div class="cond">探测 · 脚本能测的</div>
+    <div class="bcard a">
+      <span class="tt">probe-env.ps1</span> <span class="tag b">只读</span>
+      <div class="codewrap"><pre><code>pwsh -File scripts\probe-env.ps1</code></pre></div>
+      <p class="mut">管理员权限 · 数据库类型（服务 / 端口 / 文件扩展名）· 网络档位（Public 拦 SMB）· 磁盘容量 · 共享名冲突 · 导出工具在位</p>
+    </div>
+  </div>
+  <div class="branch">
+    <div class="cond">提问 · 只能问人的（AUQ）</div>
+    <div class="bcard">
+      <span class="tt">需求澄清</span> <span class="tag gy">探不到才问</span>
+      <table>
+        <tr><th>决策点</th><th>保守默认</th></tr>
+        <tr><td>开放哪套库、哪台机器</td><td>用户指定</td></tr>
+        <tr><td>通道 A / B（要不要实时）</td><td>A</td></tr>
+        <tr><td>快照周期</td><td>每天</td></tr>
+        <tr><td>账号模式（域组 / 本地 / 一人一号）</td><td>本地最小账号</td></tr>
+        <tr><td>敏感字段与审批状态</td><td>视为敏感，脱敏后才开放</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+<div class="warn"><b>无管理员 / 非 Windows</b>　无管理员走降级：IT 既有共享开只读子目录、或数据库端口已放行直接走通道 B、或提 IT 工单——禁止绕权限硬来。非 Windows 服务器按「导出快照 → 只读文件共享 → 定时任务」思路适配（Linux 用 smbd ＋ cron，macOS 用文件共享 ＋ launchd）。细节见 GUIDE 第 0 步。</div>
+
 <h2>主路径五步（通道 A）</h2>
-<p class="sub">在数据库所在电脑上操作，需本地管理员权限；脚本默认 dry-run，确认计划后再加 <code>-Apply</code>。各命令块右上角「复制」可一键复制。动手前先跑 <code>scripts\probe-env.ps1</code>（只读体检：权限 / 库型 / 网络档位 / 磁盘），再定参数；无管理员或非 Windows 见 GUIDE 第 0 步适配路径。</p>
+<p class="sub">先完成上方「动手前：先探后问」，再按五步执行；需本地管理员权限。脚本默认 dry-run，确认计划后加 <code>-Apply</code>。</p>
 
 <div class="step"><div class="dot">1</div><div class="body">
   <h3>建两个目录 <span class="tag gy">本机私有 / 对外只读，分开</span></h3>
@@ -200,8 +229,9 @@ dir \\&lt;服务器IP&gt;\DbShare                     # 能列出快照文件</c
   按实际办公网段填 ScopeSubnet，禁止 any；强密码定期轮换，人走即撤。
 </div>
 
-<h2>工具箱（3 个零依赖 PowerShell 脚本）</h2>
-<div class="grid3">
+<h2>工具箱（4 个零依赖 PowerShell 脚本）</h2>
+<div class="grid2">
+  <div class="card"><b>probe-env.ps1</b> <span class="tag b">第 0 步</span><p style="font-size:13.5px;color:var(--gray);margin:6px 0 0">只读环境探针：管理员权限 / 库型 / 网络档位 / 磁盘 / 共享冲突 / 导出工具。动手前先跑。</p></div>
   <div class="card"><b>snapshot-share.ps1</b> <span class="tag b">通道 A</span><p style="font-size:13.5px;color:var(--gray);margin:6px 0 0">robocopy 镜像快照目录 ＋ 建 SMB 只读共享 ＋ NTFS 只读授权。主路径核心。</p></div>
   <div class="card"><b>verify-access.ps1</b> <span class="tag b">通道 A</span><p style="font-size:13.5px;color:var(--gray);margin:6px 0 0">服务器侧体检：共享存在 / 目录非空 / 445 监听 / 打印给同事的地址。</p></div>
   <div class="card"><b>setup-firewall.ps1</b> <span class="tag gy">通道 B</span><p style="font-size:13.5px;color:var(--gray);margin:6px 0 0">数据库端口入站放行，必须限定内网网段（-ScopeSubnet）。</p></div>
