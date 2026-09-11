@@ -140,7 +140,7 @@
 <p class="sub" style="margin-top:12px">通道 A 按库型选导出法：文件型（SQLite / DuckDB / Access / Excel）导出文件即快照；服务型（SQL Server / MySQL / PostgreSQL）用备份 / 导出命令。判断不准就用 A——研究、报表、日常分析几乎都不需要实时。</p>
 
 <h2>主路径五步（通道 A）</h2>
-<p class="sub">在数据库所在电脑上操作，需本地管理员权限；脚本默认 dry-run，确认计划后再加 <code>-Apply</code>。各命令块右上角「复制」可一键复制。</p>
+<p class="sub">在数据库所在电脑上操作，需本地管理员权限；脚本默认 dry-run，确认计划后再加 <code>-Apply</code>。各命令块右上角「复制」可一键复制。动手前先跑 <code>scripts\probe-env.ps1</code>（只读体检：权限 / 库型 / 网络档位 / 磁盘），再定参数；无管理员或非 Windows 见 GUIDE 第 0 步适配路径。</p>
 
 <div class="step"><div class="dot">1</div><div class="body">
   <h3>建两个目录 <span class="tag gy">本机私有 / 对外只读，分开</span></h3>

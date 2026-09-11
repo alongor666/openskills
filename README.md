@@ -14,7 +14,7 @@ npx skills add alongor666/openskills --skill intranet-readonly-db-share
 
 | 技能 | 用途 | 版本 |
 |---|---|---|
-| intranet-readonly-db-share | 公司内网把一台 Windows 电脑上的数据库只读开放给同事研究：主路径「快照导出 → SMB 只读共享」原件零风险，分支「只读账号直连」要实时才用；附 3 个零依赖 PowerShell 脚本（默认 dry-run） | 1.0.0 |
+| intranet-readonly-db-share | 公司内网把一台 Windows 电脑上的数据库只读开放给同事研究：主路径「快照导出 → SMB 只读共享」原件零风险，分支「只读账号直连」要实时才用；内置先探后问（只读环境探针 + AUQ 决策点 + 全参数适配表），附 4 个零依赖 PowerShell 脚本 | 1.1.0 |
 
 ## 收录标准
 
