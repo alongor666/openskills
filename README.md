@@ -4,8 +4,16 @@
 
 ## 安装
 
+人类（终端里按提示选 Agent）：
+
 ```bash
 npx skills add alongor666/openskills --skill intranet-readonly-db-share
+```
+
+AI Agent / 脚本（非交互；必须带 `--agent` 与 `-y`，否则卡在交互选择、什么都不装）：
+
+```bash
+npx -y skills add alongor666/openskills --skill intranet-readonly-db-share --agent "*" -y
 ```
 
 逐个单装（逗号批量会静默失败）；公开仓无需任何 GitHub 凭据。
