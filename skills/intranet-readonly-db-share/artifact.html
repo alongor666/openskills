@@ -80,7 +80,7 @@
    账号模式（域组·本地·一人一号）/ 敏感字段与审批状态；未答按保守默认并声明
 3) 默认通道 A：按库安全导出快照到暂存目录 -> snapshot-share.ps1 建 SMB 只读共享
    -> schtasks 定时 -> verify-access.ps1 体检后交接
-4) 脚本默认 dry-run，用户确认后再 -Apply；无管理员、非 Windows、敏感未审批
+4) 脚本默认 dry-run，用户确认后再 -Apply；无管理员、非 Windows、敏感未脱敏或未审批
    = 停下走 GUIDE 第 0 步降级与适配，禁止绕权限硬来
 5) 结束即收口：Remove-SmbShare + Remove-LocalUser + 删定时任务（见「收口」节）
 完整原理与逐条命令见下文；人类协作者看「一图看懂」即可。</code></pre>
@@ -132,7 +132,7 @@
 <h2>三层只读模型</h2>
 <div class="layer"><span class="no">网络层</span><div><b>谁能连到这台机器</b>　<span>公司内网互通（SMB 445 通常已放行）；绝不公网映射 / DMZ</span></div></div>
 <div class="layer"><span class="no">共享层</span><div><b>暴露的是什么</b>　<span>只读副本目录：SMB ReadAccess ＋ NTFS RX，操作系统级强制只读</span></div></div>
-<div class="layer"><span class="no">账号层</span><div><b>谁能拿、拿多少</b>　<span>共享 / 数据库只读账号一人一号（或按组），敏感字段先脱敏，人走即撤</span></div></div>
+<div class="layer"><span class="no">账号层</span><div><b>谁能拿、拿多少</b>　<span>共享 / 数据库只读账号一人一号（或按组），敏感字段绝对脱敏，人走即撤</span></div></div>
 
 <h2>30 秒选通道</h2>
 <div class="q">同事要实时数据？</div>
@@ -177,7 +177,7 @@
         <tr><td>通道 A / B（要不要实时）</td><td>A</td></tr>
         <tr><td>快照周期</td><td>每天</td></tr>
         <tr><td>账号模式（域组 / 本地 / 一人一号）</td><td>本地最小账号</td></tr>
-        <tr><td>敏感字段与审批状态</td><td>视为敏感，脱敏后才开放</td></tr>
+        <tr><td>敏感字段与审批状态</td><td>视为敏感，绝对脱敏＋审批后才开放</td></tr>
       </table>
     </div>
   </div>
@@ -254,7 +254,7 @@ dir \\&lt;服务器IP&gt;\DbShare                     # 能列出快照文件</c
 </div>
 
 <h2>红线（开放期间全程有效）</h2>
-<div class="warn"><b>脱敏优先</b>　客户敏感字段（姓名 / 证件号 / 手机号）能去则去；共享范围最小必要，遵守公司数据制度，敏感范围先审批。</div>
+<div class="warn"><b>绝对脱敏（法律红线，不是可选项）</b>　姓名 / 证件号 / 手机号等个人敏感信息：能不导出的一律不导出；确需保留关联性的必须加盐哈希或掩码（如 138****5678），默认不落明文；未脱敏一律不开放。遵守《个人信息保护法》与公司数据制度，敏感范围先审批后共享。</div>
 <div class="warn"><b>原件不出门</b>　数据库原件、代码目录、配置文件（含连接串密码）绝不进共享目录。</div>
 <div class="warn"><b>账号最小化</b>　一人一号（或按组），强密码定期轮换，人员变动立即撤。</div>
 <div class="warn"><b>只在内网</b>　一切端口只对公司内网网段开放；禁止公网映射、禁止路由器 DMZ。</div>
