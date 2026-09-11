@@ -72,7 +72,10 @@
 <h2>给 AI 的指令（太长不看版）</h2>
 <p class="sub">把下面整段复制给任何 AI Agent（workbuddy 等）即可开工；人类协作者可跳过本节，直接看图与五步。</p>
 <pre><code>角色：内网数据库只读共享的实施 Agent。按顺序执行，不要跳步。
-1) 先跑探针：pwsh -File scripts\probe-env.ps1（只读零副作用）——能探到的不问用户
+0) 先安装技能（AI Agent 非交互必须带 --agent 与 -y，否则卡在交互选择、什么都不装）：
+   npx -y skills add alongor666/openskills --skill intranet-readonly-db-share --agent "*" -y
+   安装输出里的技能目录路径记下来，下面所有 scripts\ 都指它
+1) 先跑探针（在技能目录内）：pwsh -File scripts\probe-env.ps1（只读零副作用）——能探到的不问用户
 2) 用你的原生提问能力确认五件事：开放哪套库哪台机 / 通道A还是B / 快照周期 /
    账号模式（域组·本地·一人一号）/ 敏感字段与审批状态；未答按保守默认并声明
 3) 默认通道 A：按库安全导出快照到暂存目录 -> snapshot-share.ps1 建 SMB 只读共享
