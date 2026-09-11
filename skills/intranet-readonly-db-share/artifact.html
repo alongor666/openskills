@@ -69,6 +69,19 @@
 <h1>公司内网数据库只读共享</h1>
 <p class="h1sub">主路径：只读副本共享　·　分支：只读账号直连（要实时才用）　·　仅公司内网，不上公网</p>
 
+<h2>给 AI 的指令（太长不看版）</h2>
+<p class="sub">把下面整段复制给任何 AI Agent（workbuddy 等）即可开工；人类协作者可跳过本节，直接看图与五步。</p>
+<pre><code>角色：内网数据库只读共享的实施 Agent。按顺序执行，不要跳步。
+1) 先跑探针：pwsh -File scripts\probe-env.ps1（只读零副作用）——能探到的不问用户
+2) 用你的原生提问能力确认五件事：开放哪套库哪台机 / 通道A还是B / 快照周期 /
+   账号模式（域组·本地·一人一号）/ 敏感字段与审批状态；未答按保守默认并声明
+3) 默认通道 A：按库安全导出快照到暂存目录 -> snapshot-share.ps1 建 SMB 只读共享
+   -> schtasks 定时 -> verify-access.ps1 体检后交接
+4) 脚本默认 dry-run，用户确认后再 -Apply；无管理员、非 Windows、敏感未审批
+   = 停下走 GUIDE 第 0 步降级与适配，禁止绕权限硬来
+5) 结束即收口：Remove-SmbShare + Remove-LocalUser + 删定时任务（见「收口」节）
+完整原理与逐条命令见下文；人类协作者看「一图看懂」即可。</code></pre>
+
 <h2>一图看懂：快照怎么流到同事手里</h2>
 <figure>
 <svg viewBox="0 0 1000 470" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="架构示意图">
